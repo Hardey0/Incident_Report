@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>User Authentication - Incident Reporting</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0; padding:0; height:100%;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .blob {
+      position: fixed;
+      border-radius: 45% 55% 60% 40% / 60% 40% 60% 40%;
+      opacity: 0.3;
+      filter: blur(80px);
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+      animation-direction: alternate;
+      mix-blend-mode: screen;
+      z-index: -1;
+    }
+    .blob1 {
+      width: 400px;
+      height: 400px;
+      background: #ff6a88;
+      top: 10%;
+      left: 10%;
+      animation: float1 7s;
+    }
+    .blob2 {
+      width: 350px;
+      height: 350px;
+      background: #6a11cb;
+      bottom: 15%;
+      right: 15%;
+      animation: float2 9s;
+    }
+    .blob3 {
+      width: 400px;
+      height: 400px;
+      background: #2575fc;
+      top: 35%;
+      right: 25%;
+      animation: float3 6.5s;
+    }
+    @keyframes float1 {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(30px, 20px) scale(1.05); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+    @keyframes float2 {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(-20px, 30px) scale(1.05); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+    @keyframes float3 {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(25px, -15px) scale(1.05); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    .auth-container {
+      position: relative;
+      width: 420px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 25px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.45);
+      padding: 40px 50px 60px 50px;
+      color: white;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    h2 {
+      margin: 0 0 40px 0;
+      font-weight: 700;
+      font-size: 2.4rem;
+      letter-spacing: 1.3px;
+      text-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      width: 100%;
+      top: 90px;
+      left: 0;
+      transition: all 0.5s ease;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(50px);
+    }
+    form.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+      position: relative;
+      top: 0;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 16px 22px;
+      margin-bottom: 24px;
+      border-radius: 16px;
+      border: none;
+      outline: none;
+      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.25);
+      color: #fff;
+      box-shadow:
+        inset 2px 2px 6px rgba(255, 255, 255, 0.4),
+        inset -2px -2px 6px rgba(0,0,0,0.1);
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+      font-weight: 600;
+    }
+    input::placeholder {
+      color: #eaeaea;
+      font-weight: 500;
+    }
+    input:focus {
+      background: rgba(255, 255, 255, 0.38);
+      box-shadow:
+        inset 3px 3px 10px rgba(255,255,255,0.75),
+        inset -3px -3px 10px rgba(0,0,0,0.15);
+    }
+
+    button.submit-btn {
+      padding: 16px 0;
+      background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+      border-radius: 20px;
+      border: none;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      transition: background 0.5s ease, box-shadow 0.4s ease;
+      box-shadow: 0 6px 20px 0 rgba(78, 84, 200, 0.7);
+      letter-spacing: 1.1px;
+      margin-bottom: 12px;
+    }
+    button.submit-btn:hover {
+      background: linear-gradient(135deg, #8f94fb 0%, #4e54c8 100%);
+      box-shadow: 0 8px 25px 0 rgba(143, 148, 251, 0.9);
+    }
+
+    .toggle-link {
+      cursor: pointer;
+      color: #bbb;
+      font-weight: 600;
+      user-select: none;
+      transition: color 0.3s ease;
+      letter-spacing: 0.7px;
+      margin-top: 10px;
+    }
+    .toggle-link:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+    .error-message {
+      color: #ff7b72;
+      margin-bottom: 20px;
+      min-height: 24px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-align: center;
+    }
+    .success-message {
+      color: #9df9cf;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-align: center;
+      letter-spacing: 0.4px;
+    }
+
+    @media (max-width: 480px) {
+      .auth-container {
+        width: 320px;
+        padding: 35px 30px 50px 30px;
+      }
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 30px;
+      }
+      input[type="email"],
+      input[type="password"] {
+        font-size: 1rem;
+        padding: 14px 18px;
+      }
+      button.submit-btn {
+        font-size: 1.1rem;
+        padding: 14px 0;
+        margin-bottom: 10px;
+      }
+    }
+    @keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-10px); }
+  80% { transform: translateX(10px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 0.5s;
+}
+
+  </style>
+</head>
+<body>
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+
+  <main class="auth-container" role="main" aria-label="User Authentication">
+
+    <h2 id="form-title">User Login</h2>
+
+    <form id="login-form" class="active" aria-labelledby="form-title" novalidate>
+      <div class="error-message" id="login-error"></div>
+      <input type="email" id="login-email" placeholder="Email" autocomplete="email" required />
+      <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" required />
+      <button type="submit" class="submit-btn" aria-label="Log in">Log In</button>
+      <p class="toggle-link" id="to-signup" tabindex="0" role="button">Don't have an account? Sign Up</p>
+      <p class="toggle-link" id="to-forgot" tabindex="0" role="button">Forgot Password?</p>
+    </form>
+
+    <form id="signup-form" aria-labelledby="form-title" novalidate>
+      <div class="error-message" id="signup-error"></div>
+      <div class="success-message" id="signup-success"></div>
+      <input type="email" id="signup-email" placeholder="Email" autocomplete="email" required />
+      <input type="password" id="signup-password" placeholder="Password" autocomplete="new-password" required />
+      <button type="submit" class="submit-btn" aria-label="Sign up">Sign Up</button>
+      <p class="toggle-link" id="to-login-from-signup" tabindex="0" role="button">Already have an account? Log In</p>
+    </form>
+
+    <form id="forgot-form" aria-labelledby="form-title" novalidate>
+      <div class="error-message" id="forgot-error"></div>
+      <div class="success-message" id="forgot-success"></div>
+      <input type="email" id="forgot-email" placeholder="Enter your email" autocomplete="email" required />
+      <button type="submit" class="submit-btn" aria-label="Reset password">Reset Password</button>
+      <p class="toggle-link" id="to-login-from-forgot" tabindex="0" role="button">Back to Login</p>
+    </form>
+
+  </main>
+  <script type="module" src="script.js"></script>
+</body>
+</html>

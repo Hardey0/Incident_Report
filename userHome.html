@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<title>User Dashboard - Incident Reporting</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    padding: 1rem 2rem;
+    font-weight: 700;
+    font-size: 1.8rem;
+    text-align: center;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    position: relative;
+  }
+  #logout-btn {
+    position: absolute;
+    right: 1.5rem;
+    top: 1rem;
+    background-color: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  #logout-btn:hover {
+    background-color: rgba(255,255,255,0.3);
+  }
+  main {
+    flex: 1;
+    display: flex;
+    gap: 24px;
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .form-container {
+    flex: 1 1 350px;
+    max-width: 400px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(31,38,135,0.37);
+  }
+  .form-container h2 {
+    margin-top: 0;
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+  }
+  input[type="text"],
+  input[type="datetime-local"],
+  select,
+  textarea,
+  input[type="file"] {
+    width: 100%;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    resize: vertical;
+    font-family: 'Poppins', sans-serif;
+    transition: background-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="datetime-local"]:focus,
+  select:focus,
+  textarea:focus,
+  input[type="file"]:focus {
+    background: rgba(255,255,255,0.35);
+  }
+  textarea {
+    min-height: 100px;
+  }
+  button {
+    width: 100%;
+    padding: 12px 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+    color: white;
+    box-shadow: 0 6px 20px rgba(78,84,200,0.7);
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: linear-gradient(135deg, #8f94fb 0%, #4e54c8 100%);
+  }
+  .incidents-container {
+    flex: 2 1 600px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(31,38,135,0.37);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .incidents-container h2 {
+    margin-top: 0;
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .incident-card {
+    background: rgba(255,255,255,0.25);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    box-shadow:
+      4px 4px 10px rgba(0,0,0,0.15),
+      inset 2px 2px 6px rgba(255,255,255,0.4);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .incident-card:hover {
+    background-color: rgba(255,255,255,0.35);
+  }
+  .incident-title {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin: 0 0 6px 0;
+  }
+  .incident-description {
+    margin: 0 0 8px 0;
+    max-height: 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .incident-meta {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    display: flex;
+    justify-content: space-between;
+  }
+  .badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: white;
+    user-select: none;
+  }
+  .severity-low {
+    background-color: #2ecc71;
+  }
+  .severity-medium {
+    background-color: #f39c12;
+  }
+  .severity-high {
+    background-color: #e74c3c;
+  }
+  .status-open {
+    background-color: #3498db;
+  }
+  .status-inprogress {
+    background-color: #9b59b6;
+  }
+  .status-resolved {
+    background-color: #27ae60;
+  }
+  img.incident-photo {
+    max-width: 100%;
+    margin-top: 10px;
+    border-radius: 12px;
+  }
+  /* Modal */
+  #detail-modal {
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+  #detail-modal.active {
+    display: flex;
+  }
+  #modal-content {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(20px);
+    padding: 24px;
+    border-radius: 20px;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    color: white;
+    position: relative;
+  }
+  #modal-content h3 {
+    margin-top:0;
+    margin-bottom: 10px;
+  }
+  #modal-content p {
+    margin-bottom: 12px;
+  }
+  #modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-size: 2rem;
+    cursor: pointer;
+    user-select: none;
+    color: white;
+    font-weight: 700;
+  }
+  #modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 12px;
+  }
+  #modal-buttons button {
+    flex: 1;
+    padding: 12px 0;
+    font-size: 1rem;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+  }
+  #edit-btn {
+    background: linear-gradient(135deg,#4e54c8,#8f94fb);
+    color: white;
+    font-weight: 700;
+  }
+  #delete-btn {
+    background: #e74c3c;
+    color: white;
+    font-weight: 700;
+  }
+  #modal-message {
+    text-align: center;
+    margin-top: 12px;
+    font-weight: 600;
+  }
+  /* Loader */
+  #loader {
+    position: fixed;
+    top:50%;left:50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    z-index: 9999;
+  }
+  .spinner {
+    border: 6px solid rgba(255,255,255,0.2);
+    border-top: 6px solid #fff;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    to {transform: rotate(360deg);}
+  }
+  /* Responsive */
+  @media (max-width: 900px) {
+    main {
+      flex-direction: column;
+      padding: 16px;
+    }
+    .form-container,
+    .incidents-container {
+      max-width: 100%;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    #modal-content {
+      max-width: 90vw;
+      max-height: 80vh;
+    }
+  }
+  option{
+    background-color: #4e54c8;
+  }
+  .modal-text-box {
+  display: inline-block;
+  max-width: 400px; 
+  max-height: 120px;
+  padding: 8px;
+  margin-left: 8px;
+  /* background: #222; */
+  /* border: 1px solid #555; */
+  /* border-radius: 4px; */
+  color: #eee;
+  overflow: auto;
+  vertical-align: top;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  User Dashboard
+  <button id="logout-btn" aria-label="Logout">Logout</button>
+</header>
+
+<main>
+  <section class="form-container" aria-label="New incident submission form">
+    <h2>Submit New Incident</h2>
+    <form id="incident-form" novalidate>
+      <label for="title">Title <abbr title="required">*</abbr></label>
+      <input type="text" id="title" name="title" placeholder="Incident title" required />
+      <label for="description">Description <abbr title="required">*</abbr></label>
+      <textarea id="description" name="description" placeholder="Describe the incident" required></textarea>
+      <label for="severity">Severity <abbr title="required">*</abbr></label>
+      <select id="severity" name="severity" required>
+        <option value="" disabled selected>Select severity</option>
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+      </select>
+      <label for="datetime">Date & Time <abbr title="required">*</abbr></label>
+      <input type="datetime-local" id="datetime" name="datetime" required />
+      <label for="photo">Photo (optional)</label>
+      <input type="file" id="photo" name="photo" accept="image/*" />
+      <button type="submit">Submit Incident</button>
+      <div id="form-message" role="alert" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <section class="incidents-container" aria-label="List of user incidents">
+    <h2>Your Incident Reports</h2>
+    <div id="incidents-list" aria-live="polite" tabindex="0" role="region" aria-label="Submitted incidents list">
+      <!-- Incident cards injected here -->
+    </div>
+  </section>
+</main>
+
+<div id="detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
+  <div id="modal-content">
+    <span id="modal-close" aria-label="Close dialog">&times;</span>
+    <h3 id="modal-title">Incident Title</h3>
+    <p id="modal-description"></p>
+    <p><strong>Severity:</strong> <span id="modal-severity"></span></p>
+    <p><strong>Status:</strong> <span id="modal-status"></span></p>
+    <p><strong>Date:</strong> <time id="modal-date"></time></p>
+    <img id="modal-photo" alt="Incident photo" style="display:none; max-width:100%; border-radius:12px; margin-top:12px;" />
+    <div id="modal-message"></div>
+    <div id="modal-buttons">
+      <button id="edit-btn" type="button">Edit</button>
+      <button id="delete-btn" type="button">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="loader" aria-hidden="true" title="Loading">
+  <div class="spinner"></div>
+</div>
+
+
+ <script type="module" src="user.js"></script>
+</body>
+</html>
