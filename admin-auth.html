@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>User Authentication - Incident Reporting</title>
+<title>Admin Authentication - Incident Management</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
   
   :root {
-    --primary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    --secondary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --accent-gradient: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
     --success-gradient: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
     --glass-bg: rgba(255, 255, 255, 0.1);
     --glass-border: rgba(255, 255, 255, 0.2);
@@ -45,18 +45,17 @@
     width: 100%;
     height: 100%;
     background: 
-      radial-gradient(circle at 30% 30%, rgba(79, 172, 254, 0.4) 0%, transparent 50%),
-      radial-gradient(circle at 70% 70%, rgba(0, 242, 254, 0.4) 0%, transparent 50%),
-      radial-gradient(circle at 50% 20%, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
-    animation: float 10s ease-in-out infinite;
+      radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.4) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.4) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.4) 0%, transparent 50%);
+    animation: float 8s ease-in-out infinite;
     pointer-events: none;
     z-index: -1;
   }
   
   @keyframes float {
     0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-    33% { transform: translateY(-20px) rotate(2deg) scale(1.02); }
-    66% { transform: translateY(10px) rotate(-1deg) scale(0.98); }
+    50% { transform: translateY(-30px) rotate(3deg) scale(1.05); }
   }
   
   .auth-container {
@@ -71,18 +70,6 @@
     position: relative;
     overflow: hidden;
     margin: 2rem;
-    animation: slideInUp 0.8s ease;
-  }
-  
-  @keyframes slideInUp {
-    from {
-      opacity: 0;
-      transform: translateY(50px) scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
   }
   
   .auth-container::before {
@@ -92,7 +79,7 @@
     left: 0;
     width: 100%;
     height: 2px;
-    background: var(--primary-gradient);
+    background: var(--secondary-gradient);
     transform: scaleX(0);
     animation: slideIn 1s ease 0.5s forwards;
   }
@@ -122,11 +109,11 @@
     margin-bottom: 1rem;
   }
   
-  .user-badge {
+  .admin-badge {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: var(--primary-gradient);
+    background: var(--secondary-gradient);
     padding: 0.5rem 1rem;
     border-radius: 50px;
     font-size: 0.9rem;
@@ -135,8 +122,8 @@
     letter-spacing: 0.5px;
   }
   
-  .user-badge::before {
-    content: '👤';
+  .admin-badge::before {
+    content: '🛡️';
     font-size: 1rem;
   }
   
@@ -164,7 +151,7 @@
   }
   
   .tab-btn.active {
-    background: var(--primary-gradient);
+    background: var(--secondary-gradient);
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -220,7 +207,7 @@
   }
   
   .form-input:focus {
-    border-color: rgba(79, 172, 254, 0.8);
+    border-color: rgba(255, 255, 255, 0.5);
     background: rgba(255, 255, 255, 0.15);
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -256,10 +243,21 @@
     transform: translateY(-50%) scale(1.1);
   }
   
+  .admin-key-info {
+    background: rgba(255, 193, 7, 0.2);
+    border: 1px solid rgba(255, 193, 7, 0.5);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #ffc107;
+    text-align: center;
+  }
+  
   .form-btn {
     width: 100%;
     padding: 1rem 2rem;
-    background: var(--primary-gradient);
+    background: var(--secondary-gradient);
     border: none;
     border-radius: 50px;
     color: white;
@@ -303,7 +301,7 @@
     transform: none;
   }
   
-  .admin-link {
+  .user-link {
     text-align: center;
     padding: 1rem;
     background: rgba(255, 255, 255, 0.05);
@@ -311,24 +309,16 @@
     margin-top: 1rem;
   }
   
-  .admin-link a {
+  .user-link a {
     color: var(--text-primary);
     text-decoration: none;
     font-weight: 500;
     transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
   }
   
-  .admin-link a:hover {
+  .user-link a:hover {
     color: #4facfe;
     text-decoration: underline;
-  }
-  
-  .admin-link a::before {
-    content: '🛡️';
-    font-size: 1rem;
   }
   
   .alert {
@@ -359,30 +349,6 @@
     color: #e74c3c;
   }
   
-  .welcome-message {
-    background: rgba(79, 172, 254, 0.2);
-    border: 1px solid rgba(79, 172, 254, 0.5);
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 2rem;
-    text-align: center;
-    color: #4facfe;
-    font-size: 0.95rem;
-    line-height: 1.5;
-  }
-  
-  .form-footer {
-    text-align: center;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .form-footer p {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-  }
-  
   @media (max-width: 768px) {
     .auth-container {
       margin: 1rem;
@@ -397,23 +363,15 @@
       padding: 0.75rem;
       font-size: 0.9rem;
     }
-    
-    .welcome-message {
-      font-size: 0.9rem;
-    }
   }
 </style>
 </head>
 <body>
   <div class="auth-container">
     <div class="auth-header">
-      <h1 class="auth-title">User Portal</h1>
-      <p class="auth-subtitle">Report and track incidents easily</p>
-      <div class="user-badge">User Access</div>
-    </div>
-    
-    <div class="welcome-message">
-      Welcome! Create an account or sign in to report incidents and track their status.
+      <h1 class="auth-title">Admin Portal</h1>
+      <p class="auth-subtitle">Secure access for system administrators</p>
+      <div class="admin-badge">Admin Access</div>
     </div>
     
     <div class="auth-tabs">
@@ -427,7 +385,7 @@
     <form class="auth-form active" id="signin-form">
       <div class="form-group">
         <label class="form-label" for="signin-email">Email Address</label>
-        <input type="email" id="signin-email" class="form-input" placeholder="your@email.com" required>
+        <input type="email" id="signin-email" class="form-input" placeholder="admin@company.com" required>
       </div>
       
       <div class="form-group">
@@ -438,7 +396,7 @@
         </div>
       </div>
       
-      <button type="submit" class="form-btn">Sign In</button>
+      <button type="submit" class="form-btn">Sign In to Dashboard</button>
     </form>
     
     <!-- Sign Up Form -->
@@ -450,13 +408,13 @@
       
       <div class="form-group">
         <label class="form-label" for="signup-email">Email Address</label>
-        <input type="email" id="signup-email" class="form-input" placeholder="your@email.com" required>
+        <input type="email" id="signup-email" class="form-input" placeholder="admin@company.com" required>
       </div>
       
       <div class="form-group">
         <label class="form-label" for="signup-password">Password</label>
         <div class="password-field">
-          <input type="password" id="signup-password" class="form-input" placeholder="Create a password" required minlength="6">
+          <input type="password" id="signup-password" class="form-input" placeholder="Create a strong password" required minlength="6">
           <button type="button" class="password-toggle" data-target="signup-password">👁️</button>
         </div>
       </div>
@@ -469,19 +427,26 @@
         </div>
       </div>
       
-      <button type="submit" class="form-btn">Create Account</button>
+      <div class="form-group">
+        <label class="form-label" for="admin-key">Admin Access Key</label>
+        <input type="password" id="admin-key" class="form-input" placeholder="Enter admin access key" required>
+        <div class="admin-key-info">
+          🔑 Contact your system administrator for the admin access key
+        </div>
+      </div>
+      
+      <button type="submit" class="form-btn">Create Admin Account</button>
     </form>
     
-    <div class="form-footer">
-      <p>Need help? Contact support at support@company.com</p>
-    </div>
-    
-    <div class="admin-link">
-      <p>System Administrator? <a href="admin-auth.html">Access Admin Portal</a></p>
+    <div class="user-link">
+      <p>Not an admin? <a href="user-auth.html">Access User Portal</a></p>
     </div>
   </div>
 
   <script>
+    // Admin access key (in production, this should be more secure)
+    const ADMIN_ACCESS_KEY = 'ADMIN2024!';
+    
     // UI Elements
     const tabBtns = document.querySelectorAll('.tab-btn');
     const authForms = document.querySelectorAll('.auth-form');
@@ -539,36 +504,37 @@
         return;
       }
       
-      // Check if user exists in localStorage
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const user = users.find(u => u.email === email);
-      
-      if (!user) {
-        showAlert('User account not found', 'error');
+      // Check if admin exists in localStorage
+      // Look for admin in users array
+const users = JSON.parse(localStorage.getItem('users') || '[]');
+const admin = users.find(u => u.email === email && u.isAdmin);
+
+      if (!admin) {
+        showAlert('Admin account not found', 'error');
         return;
       }
       
-      if (user.password !== password) {
+      if (admin.password !== password) {
         showAlert('Invalid password', 'error');
         return;
       }
       
-      // Set current user session
-      const userSession = {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        isAdmin: false,
+      // Set current admin session
+      const adminSession = {
+        id: admin.id,
+        email: admin.email,
+        name: admin.name,
+        isAdmin: true,
         loginTime: new Date().toISOString()
       };
       
-      localStorage.setItem('currentUser', JSON.stringify(userSession));
-      localStorage.setItem('userSession', JSON.stringify(userSession));
+      localStorage.setItem('currentUser', JSON.stringify(adminSession));
+      localStorage.setItem('adminSession', JSON.stringify(adminSession));
       
       showAlert('Sign in successful! Redirecting...', 'success');
       
       setTimeout(() => {
-        window.location.href = 'userHome.html'; // Your user dashboard page
+        window.location.href = 'admin-dashboard.html';
       }, 1500);
     });
     
@@ -580,9 +546,10 @@
       const email = document.getElementById('signup-email').value.trim();
       const password = document.getElementById('signup-password').value;
       const confirmPassword = document.getElementById('signup-confirm').value;
+      const adminKey = document.getElementById('admin-key').value;
       
       // Validation
-      if (!name || !email || !password || !confirmPassword) {
+      if (!name || !email || !password || !confirmPassword || !adminKey) {
         showAlert('Please fill in all fields', 'error');
         return;
       }
@@ -597,27 +564,34 @@
         return;
       }
       
-      // Check if user already exists
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      if (users.some(u => u.email === email)) {
-        showAlert('Account with this email already exists', 'error');
+      if (adminKey !== ADMIN_ACCESS_KEY) {
+        showAlert('Invalid admin access key', 'error');
         return;
       }
       
-      // Create new user
-      const newUser = {
-        id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-        name,
-        email,
-        password,
-        isAdmin: false,
-        createdAt: new Date().toISOString()
-      };
+      // Check if admin already exists
+     // Check if user already exists (users + admins in one array)
+const users = JSON.parse(localStorage.getItem('users') || '[]');
+if (users.some(u => u.email === email)) {
+  showAlert('An account with this email already exists', 'error');
+  return;
+}
+
+// Create new admin inside users array
+const newAdmin = {
+  id: 'admin_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+  name,
+  email,
+  password,
+  isAdmin: true,
+  createdAt: new Date().toISOString()
+};
+
+users.push(newAdmin);
+localStorage.setItem('users', JSON.stringify(users));
+
       
-      users.push(newUser);
-      localStorage.setItem('users', JSON.stringify(users));
-      
-      showAlert('Account created successfully!', 'success');
+      showAlert('Admin account created successfully!', 'success');
       
       // Clear form
       signupForm.reset();
@@ -643,17 +617,12 @@
     }
     
     // Check if already logged in
-    // const currentSession = localStorage.getItem('userSession');
-    // if (currentSession) {
-    //   const session = JSON.parse(currentSession);
-    //   if (!session.isAdmin) {
-    //     window.location.href = 'userHome.html';
-    //   }
-    // }
-    
-    // Initialize users array if it doesn't exist
-    if (!localStorage.getItem('users')) {
-      localStorage.setItem('users', '[]');
+    const currentSession = localStorage.getItem('adminSession');
+    if (currentSession) {
+      const session = JSON.parse(currentSession);
+      if (session.isAdmin) {
+        window.location.href = 'admin-dashboard.html';
+      }
     }
   </script>
 </body>

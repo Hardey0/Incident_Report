@@ -8,7 +8,7 @@ function getLocalIncidents() {
 function saveLocalIncidents(incidents) {
   localStorage.setItem("incidents", JSON.stringify(incidents));
 }
-
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 // ==================== DOM Elements ====================
 
 const logoutBtn = document.getElementById("logout-btn");
@@ -251,6 +251,7 @@ function saveIncident(photoURL) {
     } else {
       const incidentData = {
         id: Date.now().toString(),
+       userId: currentUser ? currentUser.id : null,
         title: titleInput.value.trim(),
         description: descriptionInput.value.trim(),
         severity: severityInput.value,
@@ -277,7 +278,10 @@ function saveIncident(photoURL) {
 // ==================== Load Incidents ====================
 
 function loadUserIncidents() {
-  const incidents = getLocalIncidents();
+  const incidents = getLocalIncidents().filter(
+    (inc) => inc.userId === (currentUser ? currentUser.id : null)
+  );
+
 
   if (incidents.length === 0) {
     incidentsList.innerHTML = `
@@ -454,5 +458,4 @@ document.addEventListener("DOMContentLoaded", () => {
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   datetimeInput.value = now.toISOString().slice(0, 16);
 
-  console.log("Dashboard loaded successfully (localStorage mode)");
 });
