@@ -419,6 +419,7 @@
     <div class="auth-tabs">
       <button class="tab-btn active" data-tab="signin">Sign In</button>
       <button class="tab-btn" data-tab="signup">Sign Up</button>
+      <button class="tab-btn" data-tab="anonymous">Anonymous</button>
     </div>
     
     <div id="alert" class="alert"></div>
@@ -439,6 +440,32 @@
       </div>
       
       <button type="submit" class="form-btn">Sign In</button>
+    </form>
+    
+    <!-- Anonymous Access Form -->
+    <form class="auth-form" id="anonymous-form">
+      <div class="form-group">
+        <div style="background: rgba(255, 165, 0, 0.2); border: 1px solid rgba(255, 165, 0, 0.5); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; color: #ffa500; font-size: 0.95rem; line-height: 1.5;">
+          <strong>🕵️ Anonymous Reporting</strong><br>
+          Report incidents confidentially. Your identity will not be stored or tracked. Use this when reporting sensitive matters involving supervisors or management.
+        </div>
+        
+        <label class="form-label" for="anonymous-code">Optional Reference Code</label>
+        <input type="text" id="anonymous-code" class="form-input" placeholder="Enter a personal code to track your report (optional)" maxlength="20">
+        <small style="color: rgba(255, 255, 255, 0.7); font-size: 0.85rem; margin-top: 0.5rem; display: block;">
+          💡 Create a personal code (e.g., "MyCase2024") to check your report status later
+        </small>
+      </div>
+      
+      <button type="submit" class="form-btn" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);">Continue Anonymously</button>
+      
+      <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1rem; margin-top: 1rem; font-size: 0.9rem; color: rgba(255, 255, 255, 0.8);">
+        <strong>Privacy Protection:</strong><br>
+        • No personal information required<br>
+        • No IP tracking or session logging<br>
+        • Reports are completely confidential<br>
+        • Optional reference code for follow-up only
+      </div>
     </form>
     
     <!-- Sign Up Form -->
@@ -473,7 +500,7 @@
     </form>
     
     <div class="form-footer">
-      <p>Need help? Contact support at support@company.com</p>
+      <p>Need help? Contact support at ade@gmail.com.com</p>
     </div>
     
     <div class="admin-link">
@@ -488,6 +515,7 @@
     const passwordToggles = document.querySelectorAll('.password-toggle');
     const signinForm = document.getElementById('signin-form');
     const signupForm = document.getElementById('signup-form');
+    const anonymousForm = document.getElementById('anonymous-form');
     const alertEl = document.getElementById('alert');
     
     // Tab switching
@@ -630,6 +658,43 @@
       }, 2000);
     });
     
+    // Anonymous Form Handler
+    anonymousForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const referenceCode = document.getElementById('anonymous-code').value.trim();
+      
+      // Create anonymous session
+      const anonymousSession = {
+        id: 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        email: 'anonymous@system.local',
+        name: 'Anonymous User',
+        isAdmin: false,
+        isAnonymous: true,
+        referenceCode: referenceCode || null,
+        loginTime: new Date().toISOString()
+      };
+      
+      // Don't store in regular users array for privacy
+      // Only store minimal session info
+      const sessionData = {
+        id: anonymousSession.id,
+        isAnonymous: true,
+        referenceCode: anonymousSession.referenceCode,
+        loginTime: anonymousSession.loginTime
+      };
+      
+      // Store session but not in permanent user storage
+      sessionStorage.setItem('currentUser', JSON.stringify(anonymousSession));
+      sessionStorage.setItem('userSession', JSON.stringify(anonymousSession));
+      
+      showAlert('Anonymous access granted. You can now report incidents confidentially.', 'success');
+      
+      setTimeout(() => {
+        window.location.href = 'userHome.html';
+      }, 2000);
+    });
+    
     // Alert functions
     function showAlert(message, type) {
       alertEl.textContent = message;
@@ -643,18 +708,20 @@
     }
     
     // Check if already logged in
-    // const currentSession = localStorage.getItem('userSession');
-    // if (currentSession) {
-    //   const session = JSON.parse(currentSession);
-    //   if (!session.isAdmin) {
-    //     window.location.href = 'userHome.html';
-    //   }
-    // }
+    const currentSession = sessionStorage.getItem('userSession') || localStorage.getItem('userSession');
+    if (currentSession) {
+      const session = JSON.parse(currentSession);
+      if (!session.isAdmin) {
+        // Allow re-authentication for better security
+        // window.location.href = 'userHome.html';
+      }
+    }
     
     // Initialize users array if it doesn't exist
     if (!localStorage.getItem('users')) {
       localStorage.setItem('users', '[]');
     }
+   
   </script>
 </body>
 </html>
